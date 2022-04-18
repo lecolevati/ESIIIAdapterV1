@@ -1,22 +1,37 @@
 package view;
 
-import controller.IServicoPagamento;
+import controller.PagSeguro;
+import controller.PayPal;
 import controller.Visa;
-import controller.VisaAdapter;
-import model.Pagamento;
-import model.PagamentoBuilder;
+import model.Cartao;
+import model.Usuario;
 
 public class Principal {
 
 	public static void main(String[] args) {
-		Pagamento pagto =PagamentoBuilder.builder()
-				.addCartao("4444555566667777", 321)
-				.addValor(500.00d)
-				.get();
+		Usuario u = new Usuario();
+		u.setId(1001);
+		u.setNome("Fulano de Tal");
+		
+		double valor = 500.00d;
+		int parcelas = 4;
+		
+		PagSeguro pagtoPS = new PagSeguro();
+		pagtoPS.fazerLogin(u);
+		pagtoPS.realizarPagamento(valor, parcelas);
+		
 
-		Visa visa = new Visa();
-		IServicoPagamento servicoPagto = new VisaAdapter(visa);
-		servicoPagto.pagar(pagto);
+		Cartao cartao = new Cartao();
+		cartao.setNumeroCartao("4444555566667777");
+		cartao.setCvv(321);
+		
+		Visa pagtoVisa = new Visa();
+		pagtoVisa.validarCartao(cartao);
+		pagtoVisa.pagar(valor);
+		
+		
+		PayPal pagtoPP = new PayPal();
+		pagtoPP.pay(u, valor);
 	}
 
 }
